@@ -43,11 +43,11 @@ class isOffState extends State{
 }
 class isDryingState extends State{
   enterState(){
-    const enterMsg = 'Trockner gestartet';
+    const enterMsg = 'Trockner trocknet die wäsche!';
     this.sendStateMsg(enterMsg);
   }
   exitState(){
-    const enterMsg = 'trocknen fertig';
+    const enterMsg = 'Trockner ist fertig und kann geleert werden.';
     this.sendStateMsg(enterMsg);
   }
   checkValues(values){
@@ -82,7 +82,7 @@ class isPostRunState extends State{
     const {newState:{val:newValue}} = values;
     if(newValue > 10)
       this.stateProvider.changeState(isDryingState);
-    else (newValue == 0)
+    else if(newValue == 0)
       this.stateProvider.changeState(isOffState);
   }
 }
@@ -98,11 +98,11 @@ class StateContainer
     const newState = new state(this);
     if(this.currentState.constructor.name == newState.constructor.name)
       return;
-      this.currentState.exitState();
-      delete this.currentState;
-      this.currentState = newState;
-      this.currentState.enterState();
-      this.currentState.executeState();
+    this.currentState.exitState();
+    delete this.currentState;
+    this.currentState = newState;
+    this.currentState.enterState();
+    this.currentState.executeState();
   }
   executeState()
   {
@@ -124,7 +124,7 @@ class MyTrockner
   {
     this.statesContainer = new StateContainer(isOffState);
 
-    const ID_WaescheTrockerPower = 'shelly.0.SHSW-PM#XXXXX#1.Relay0.Power'/*Power*/;
+    const ID_WaescheTrockerPower = 'shelly.0.SHSW-PM##1.Relay0.Power'/*Power*/;
     on({id:  ID_WaescheTrockerPower,change: 'ne'},this.statesContainer.checkValues.bind(this.statesContainer));
   }
 }
