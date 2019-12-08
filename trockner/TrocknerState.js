@@ -1,3 +1,4 @@
+const sleep = (ms)=>{return new Promise(resolve => setTimeout(resolve, ms));}
 class State
 {
   constructor(states){
@@ -6,10 +7,12 @@ class State
   enterState(){}
   exitState(){}
   executeState(){}
-  sendStateMsg(msg)
+  async sendStateMsg(msg)
   {
     if(msg){
+
       sendTo('telegram.0',msg);
+      sleep(1500);
     }
   }
   checkValues(){}
@@ -23,7 +26,7 @@ class isOnState extends State{
   checkValues(values){
     const {oldState:{val:oldValue}} = values;
     const {newState:{val:newValue}} = values;
-    if(newValue > 10)
+    if(newValue > 200)
       this.stateProvider.changeState(isDryingState);
     else if(newValue == 0)
       this.stateProvider.changeState(isOffState);
@@ -72,15 +75,15 @@ class isPostRunState extends State{
     }
   }
   enterState(){
-    const enterMsg = 'Trockner bitte leeren!';
-    this.sendStateMsg(enterMsg);
+  //  const enterMsg = 'Trockner bitte leeren!';
+  //  this.sendStateMsg(enterMsg);
     if(!this.MyTimer)
-        this.MyTimer = setInterval(this.sendStateMsg.bind(this,"Trockner ist noch an bitte auschalten"),300000);
+        this.MyTimer = setInterval(this.sendStateMsg.bind(this,"Trockner ist noch an, bitte auschalten bzw. leeren."),300000);
   }
   checkValues(values){
     const {oldState:{val:oldValue}} = values;
     const {newState:{val:newValue}} = values;
-    if(newValue > 10)
+    if(newValue > 200)
       this.stateProvider.changeState(isDryingState);
     else if(newValue == 0)
       this.stateProvider.changeState(isOffState);
